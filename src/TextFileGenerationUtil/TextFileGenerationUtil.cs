@@ -9,7 +9,7 @@ namespace TextFileGenerationUtil
 {
     public class TextFileGenerationUtil
     {
-        private const string TempFileNameTemplate = "D:\\sorting\\temp_file_{0}.txt";
+        private const string TempFileNameTemplate = "C:\\sorting\\temp_file_{0}.txt";
         private const int InitialRowsPortionSize = 100_000;
 
         private readonly string[] _words = {
@@ -32,7 +32,7 @@ namespace TextFileGenerationUtil
         
         public async Task<string> GenerateTestFile(long maxFileSize, CancellationToken cancellationToken = default)
         {
-            Directory.CreateDirectory("D:\\sorting\\");
+            Directory.CreateDirectory("C:\\sorting\\");
             var tempFileName = string.Format(TempFileNameTemplate, DateTime.Now.Ticks);
 
             if (File.Exists(_fileName))

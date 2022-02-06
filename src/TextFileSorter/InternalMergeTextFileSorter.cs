@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using TextFileSorter.Internal;
 
 namespace TextFileSorter
 {
@@ -24,17 +23,6 @@ namespace TextFileSorter
         public async Task SortTextFile(Stream input, Stream output, CancellationToken cancellationToken = default)
         {
             var t1 = DateTime.Now;
-            // var lines = new List<string>();
-            //
-            // using (var streamReader = new StreamReader(input))
-            // {
-            //     while (!streamReader.EndOfStream)
-            //     {
-            //         var line = await streamReader.ReadLineAsync();
-            //         if (string.IsNullOrEmpty(line)) continue;
-            //         lines.Add(line);
-            //     }
-            // }
             byte[] buffer = null;
             await using (input)
             {
@@ -42,17 +30,19 @@ namespace TextFileSorter
                 await input.ReadAsync(buffer.AsMemory(0, (int)input.Length), cancellationToken);
             }
 
-            var queues = new Stack<Queue<byte>>();
-            queues.Push(new Queue<byte>());
-            for (var i = 0; i < buffer.Length; i++)
+            var list = buffer.ToList();
+
+            var i = 0;
+
+            while (i < list.Count)
             {
-                var byt = buffer[i];
-                if (byt == '\n')
-                {
-                    queues.Push(new Queue<byte>());
-                    continue;
-                }
-                queues.Peek().Enqueue(byt);
+                var indexOfDelimiter = list.IndexOf((byte)'\n', i);
+                var line = list.Skip(i).Take(indexOfDelimiter - 1).ToList();
+                i = indexOfDelimiter + 1;
+                
+                //var indexOfPoint = line.IndexOf((byte)'.');
+                //var tuple = new Tuple<byte[], byte[]>(line.Take(indexOfPoint).ToArray(), line.Skip(indexOfPoint + 1).ToArray());
+
             }
             var t2 = DateTime.Now;
             var d = t2 - t1;
